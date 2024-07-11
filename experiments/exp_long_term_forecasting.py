@@ -294,13 +294,13 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
         
-        mae, mse, rmse, mape, mspe = metric(preds_during_training[len(preds_during_training)//2:], trues_during_training[len(preds_during_training)//2:])
+        #mae, mse, rmse, mape, mspe = metric(preds_during_training[len(preds_during_training)//2:], trues_during_training[len(preds_during_training)//2:])
         
-        print('Train mse:{},Train mae:{}'.format(mse, mae))
-        print('Train rmse:{},Train mape:{}'.format(rmse, mape))
-        print('\n')
+        #print('Train mse:{},Train mae:{}'.format(mse, mae))
+        #print('Train rmse:{},Train mape:{}'.format(rmse, mape))
+        #print('\n')
         
-        time.sleep(2)
+        #time.sleep(2)
         f = open("result_long_term_forecast.txt", 'a')
         f.write(setting + "  \n")
         f.write('Train mse:{},Train mae:{}'.format(mse, mae))
