@@ -2,7 +2,7 @@ import os
 import torch
 from model import Transformer, Informer, Reformer, Flowformer, Flashformer, \
     iTransformer, iInformer, iReformer, iFlowformer, iFlashformer
-from model.LSTM import LSTM
+from model.LSTM_Base import LSTM
 
 class Exp_Basic(object):
     def __init__(self, args):
