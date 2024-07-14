@@ -372,8 +372,8 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
                 if self.args.model == 'LSTM':
                     outputs = self.model(batch_x, batch_x_mark)
+                    outputs = outputs.unsqueeze(1).repeat(1, self.args.pred_len, 1)
                     outputs = outputs.reshape((-1,1))
-                    #outputs = outputs.unsqueeze(1).repeat(1, self.args.pred_len, 1)
                 else:
                     # decoder input
                     dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
