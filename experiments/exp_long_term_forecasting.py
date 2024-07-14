@@ -33,7 +33,19 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         
     
     def _build_model(self):
-        model = self.model_dict[self.args.model].Model(self.args).float()
+        if self.args.model == 'LSTM':
+            model_cls= self.model_dict[self.args.model]
+            model = model_cls(
+                input_size=self.args.input_size,
+                hidden_size=self.args.hidden_size,
+                output_size=self.args.output_size,
+                num_layers=self.args.num_layers,
+                dropout=self.args.dropout,
+                embed_type=self.args.embed,
+                freq=self.args.freq
+            )
+        else:
+            model = self.model_dict[self.args.model].Model(self.args).float()
         if self.args.use_multi_gpu and self.args.use_gpu:
             model = nn.DataParallel(model, device_ids=self.args.device_ids)
         return model
