@@ -27,117 +27,98 @@ arg.kind_of_optim = 'default'        # default is 'Adam'.
                                     #other options : 'AdamW', 'SparseAdam', 'SGD', 'RMSprop', 'RAdam', 'NAdam' ,'LBFGS',
                                     # 'Adamax' 'ASGD' 'Adadelta' 'Adagrad'
 
-arg.criter = 'default'               # default is nn.MSELoss ( Mean Squared Error )
-                                        #   other options : 'wmape', 'smape', 'mae', 'rmse', 'quantileloss', 'huberloss', 'pinballloss'
+import torch
+from experiments.exp_long_term_forecasting import Exp_Long_Term_Forecast
+from experiments.exp_long_term_forecasting_partial import Exp_Long_Term_Forecast_Partial
+import random
+import numpy as np
 
+# Setting the seed
+fix_seed = 2023
+random.seed(fix_seed)
+torch.manual_seed(fix_seed)
+np.random.seed(fix_seed)
+
+
+
+
+# NEW OPTIONS : #
+arg.scale = True
+arg.test_size = 0.2
+arg.kind_of_scaler = 'MinMax'
+arg.name_of_col_with_date = 'date'
+arg.kind_of_optim = 'default'
+arg.criter = 'default'
 arg.do_visual = False
-arg.max_use_of_row = 'No Lim'#This is for prediction, Other options are: 'All Except a Week' or 'All Except 3 Days'
+arg.max_use_of_row = 'No Lim'#It also can be 'All Except a Week' or 'All Except 3 Days'
+#        #      #
 
-# NEW Accessories : #
+arg.is_training = 1
+arg.model_id = 'test12'
+arg.model = 'LSTM'
+arg.data = 'custom'
 
-#exp.path_to_saved_args
-#exp.vali_losses
-#exp.train_losses
-#exp.test_losses
+arg.features = 'S'
 
-#####################
-
-arg.is_training = 1                         # help: status
-arg.model_id = 'test'
-
-arg.model = 'iTransformer'                  # help: model name. options: iTransformer, iInformer, iReformer, iFlowformer, iFlashformer
-arg.data = 'custom'                         # help: dataset type
-
-arg.root_path = 'input/train'                         # help: main directory path of the data file
-arg.data_path =  'data.csv'                      # help: name of data csv file
-
-arg.pred_root_path =  'input/test'
-arg.pred_data_path = 'data.csv'
+arg.target = 'Close'
+arg.freq = 'b'
+arg.checkpoints = './checkpoints/'
 
 
-arg.features = 'MS'                             # help: forecasting task , options: M ->multivariate predict multivariate , or
-#                                                                                   S ->univariate predict univariate , or
-#                                                                                   MS ->multivariate predict univariate
 
-arg.target =  'Close'                           # help: target feature in S or MS task
+arg.seq_len = 5
+arg.label_len = 1
+arg.pred_len = 1
 
-arg.freq = 'b'                                      # help: Freq for time features encoding. options: s ->secondly , t ->minutely, h:hourly
-#                                                                                                       d ->daily , w ->weekly, m ->monthly
-#                                                                                                           b ->business days
-#                                                                                                               also more detailed freq like 15min or 3h
 
-arg.checkpoints =  './checkpoints/'                 # help: location to save model checkpoints
 
-arg.seq_len = 1*5*3                                     # help: input sequence length
-arg.label_len = 1*1                                         # help: start token length
-arg.pred_len =  1*3                                         # help: prediction sequence length
+arg.enc_in = 1
+arg.dec_in = 1
+arg.c_out = 1
 
-arg.enc_in = 6                                         # help: encoder input size
-arg.dec_in = 6                                         # help: decoder input size
-arg.c_out = 1                                         # help: output size -> applicable on arbitrary number of variates in inverted Transformers
-arg.d_model =  512                                        # help: dimension of model
-arg.n_heads =  8                                        # help: num of heads
-arg.e_layers = 8                                         # help: num of encoder layers
-arg.d_layers = 8                                         # help: num of decoder layers
-arg.d_ff =  2048                                        # help: dimension of fcn
-arg.moving_avg = 25                                         # help: window size of moving average
-arg.factor = 1                                         # help: attn factor
-arg.distil = True                                         # help: whether to use distilling in encoder, using this argument means not using distilling
 
-arg.dropout =  0.01
-
-arg.embed = 'learned'                                                 # help: time features encoding, options: timeF OR fixed OR learned
-arg.activation =  'ReLU'                                               # help: Name of activation Function
-
-#arg.output_attention =  None                                           # help: Whether to output attention in ecoder
-#arg.do_predict = None                                                   # help: whether to predict unseen future data
-
-arg.num_workers = 10                                                # help: data loader num workers
-arg.itr = 1                                                         # help: How many times repeat experiments 
-
-arg.train_epochs = 25
-
+arg.d_model = 512
+arg.n_heads = 4
+arg.e_layers = 2
+arg.d_layers = 128
+arg.d_ff = 128
+arg.moving_avg = 10
+arg.factor = 1
+arg.distil = True
+arg.dropout = 0.01
+arg.embed = 'timeF'
+arg.activation = 'geLU'
+arg.num_workers = 1
+arg.itr = 1
+arg.train_epochs = 20
 arg.batch_size = 16
-
-arg.patience = 10                                                   # help: early stopping patience
-
-arg.learning_rate = 0.00005
-
-arg.des = 'test'                                                    # help: exp description
-
-arg.loss = 'MSE'                                                    # help: loss function
-
-arg.lradj = 'type1'                                                       # help: adjust learning rate
-arg.use_amp =  False                                                     # help: use automatic mixed precision training
-
-arg.use_gpu =  True if torch.cuda.is_available() else False             # help: whether to use gpu
-arg.gpu =  0 # help: GPU
+arg.patience = 5
+arg.learning_rate = 0.00001
+arg.des = 'test'
+arg.loss = 'MSE'
+arg.lradj = 'type1'
+arg.use_amp = False
+arg.use_gpu = True if torch.cuda.is_available() else False
+arg.gpu = 0
 arg.use_multi_gpu = False
 arg.devices = '0,1,2,3'
-
 arg.exp_name = 'MTSF'
-
-arg.channel_independence =  False                                        # help: whether to use channel_independence mechanism
-
-arg.inverse =  False                                                         # help: inverse output data
-
-arg.class_strategy =  'projection'                                        # help: options: projection/average/cls_token
-
-
+arg.channel_independence = False
+arg.inverse = False
+arg.class_strategy = 'projection'
+arg.efficient_training = False
+arg.use_norm = True
+arg.partial_start_index = 0
 
 
-arg.efficient_training = False                                      # help: whether to use efficient_training (exp_name should be partial_train) | See Figure 8
+# LSTM specific arguments
+arg.input_size=1
+arg.hidden_size=64
+arg.output_size=1
+arg.num_layers=1
+arg.dropout=0.001
 
-arg.use_norm = True                                                   # help: use norm and denorm | type=int
 
-arg.partial_start_index =  0                        # help: the start index of variates for partial training,
-#                                                       you can select [partial_start_index, min(enc_in + partial_start_index, N)]
-
-#if arg.use_gpu and arg.use_multi_gpu:
-#        arg.devices = arg.devices.replace(' ', '')
-#        device_ids = arg.devices.split(',')
-#        arg.device_ids = [int(id_) for id_ in device_ids]
-#        arg.gpu = arg.device_ids[0]
 
 
 print('Args in experiment:')
