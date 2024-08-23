@@ -70,14 +70,24 @@ class Model(nn.Module):
             norm_layer=torch.nn.LayerNorm(configs.d_model),
             projection=nn.Linear(configs.d_model, configs.c_out, bias=True)
         )
-
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
-        # Embedding
+        # Ensure x_dec has sufficient length for pred_len
+        if x_dec.size(1) < self.pred_len:
+            # You might need to pad x_dec here or adjust it to ensure sufficient length
+            x_dec = torch.cat([x_dec, torch.zeros((x_dec.size(0), self.pred_len - x_dec.size(1), x_dec.size(2)))], dim=1)
+    
+        # Ensure x_mark_dec matches the new length of x_dec
+        if x_mark_dec.size(1) != x_dec.size(1):
+            x_mark_dec = x_mark_dec[:, :x_dec.size(1), :]
+    
+        # Embedding for encoder inputs
         enc_out = self.enc_embedding(x_enc, x_mark_enc)
         enc_out, attns = self.encoder(enc_out, attn_mask=None)
 
+        # Embedding for decoder inputs
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
         dec_out = self.decoder(dec_out, enc_out, x_mask=None, cross_mask=None)
+    
         return dec_out
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
